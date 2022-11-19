@@ -1,6 +1,5 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
 import { useEffect } from "react";
 
 import { trpc } from "../utils/trpc";
@@ -18,7 +17,7 @@ const Home: NextPage = () => {
       <Head>
         <title>Voty</title>
         <meta name="description" content="Video Voting Shootout POC App" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/logo_white.png" />
       </Head>
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
