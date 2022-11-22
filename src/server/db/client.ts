@@ -18,6 +18,8 @@ import { PrismaClient } from "@prisma/client";
 //   global.prisma = prisma;
 // }
 
+// comment below and uncomment above to use custom env checking (disabled because $npm run fill-db fails with this)
+
 declare global {
   // eslint-disable-next-line no-var
   var prisma: PrismaClient | undefined;
