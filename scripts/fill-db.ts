@@ -16,7 +16,7 @@ const fillVideoTable = async () => {
     },
     {
       title: "Krämer Goal",
-      url: "https://s3.eu-central-1.amazonaws.com/voty.app/4_Krämer.mp4",
+      url: "https://s3.eu-central-1.amazonaws.com/voty.app/4_Kra%CC%88mer.mp4",
     },
     {
       title: "Nico Goal 1",
