@@ -20,7 +20,7 @@ const fillVideoTable = async () => {
     },
     {
       title: "Nico Goal 1",
-      url: "/5_Nico.MP4",
+      url: "/5_Nico.mp4^",
     },
     {
       title: "Nico Goal 2",
