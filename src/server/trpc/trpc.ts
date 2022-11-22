@@ -15,6 +15,6 @@ const t = initTRPC.context<Context>().create({
 export const router = t.router;
 
 type RouterOutput = inferRouterOutputs<typeof appRouter>;
-export type VideoFromServer = RouterOutput["voting"]["getVideoPair"];
+export type VideoFromServer = RouterOutput["voting"]["getVideoPair"]["first"];
 
 export const publicProcedure = t.procedure;
