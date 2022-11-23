@@ -1,20 +1,26 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { trpc } from "../utils/trpc";
-import { type VideoFromServer } from "../server/trpc/trpc";
+import { trpc } from "../../../utils/trpc";
+import { type VideoFromServer } from "../../../server/trpc/trpc";
 import ReactPlayer from "react-player/file";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 const btn =
   "inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm font-medium rounded-full text-gray-700 bg-transparent  focus:outline-none focus:ring-2 focus:ring-offset-2 ";
 
 const Home: NextPage = () => {
   const voteMutation = trpc.voting.castVote.useMutation();
-  const videoPair = trpc.voting.getVideoPair.useQuery(undefined, {
-    refetchInterval: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
-  });
+  const router = useRouter();
+  const { votingId } = router.query;
+  const videoPair = trpc.voting.getVideoPair.useQuery(
+    { votingId: Number(votingId) },
+    {
+      refetchInterval: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
 
   const castVote = (selected: number) => {
     if (!videoPair.data?.first || !videoPair.data?.second) return; // make ts happy

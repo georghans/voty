@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { router, publicProcedure } from "../trpc";
 
-export const votingRouter = router({
+export const authRouter = router({
   createUser: publicProcedure
     .input(
       z.object({
