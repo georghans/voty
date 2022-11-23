@@ -1,6 +1,5 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -19,6 +18,8 @@ model Vote {
   votedAgainstId Int
   Voting         Voting   @relation(fields: [votingId], references: [id])
   votingId       Int
+  User           User     @relation(fields: [userId], references: [id])
+  userId         Int
 
   @@index([votedForId])
   @@index([votedAgainstId])
@@ -52,4 +53,5 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   Voting    Voting[]
+  Vote      Vote[]
 }
