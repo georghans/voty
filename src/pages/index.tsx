@@ -1,11 +1,12 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import { trpc } from "../utils/trpc";
-import type { VideoFromServer } from "../server/trpc/trpc";
+import { type VideoFromServer } from "../server/trpc/trpc";
 import ReactPlayer from "react-player/file";
+import Image from "next/image";
 
 const btn =
-  "inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500";
+  "inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm font-medium rounded-full text-gray-700 bg-transparent  focus:outline-none focus:ring-2 focus:ring-offset-2 ";
 
 const Home: NextPage = () => {
   const voteMutation = trpc.voting.castVote.useMutation();
@@ -16,16 +17,19 @@ const Home: NextPage = () => {
   });
 
   const castVote = (selected: number) => {
-    if (!videoPair.data?.first || !videoPair.data?.second || selected === -1)
-      return; // make ts happy
+    if (!videoPair.data?.first || !videoPair.data?.second) return; // make ts happy
 
     if (selected === videoPair.data.first?.id) {
       voteMutation.mutate({
+        userId: 1,
+        votingId: 1,
         votedFor: videoPair.data.first?.id,
         votedAgainst: videoPair.data.second?.id,
       });
     } else {
       voteMutation.mutate({
+        userId: 1,
+        votingId: 1,
         votedAgainst: videoPair.data.first?.id,
         votedFor: videoPair.data.second?.id,
       });
@@ -45,29 +49,27 @@ const Home: NextPage = () => {
       <Head>
         <title>Voty</title>
         <meta name="description" content="Video Voting Shootout POC App" />
-        <link rel="icon" href="/logo_white.png" />
+        <link rel="icon" href="/logo.png" />
       </Head>
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#000000]">
+      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#ffffff]">
         <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
+          <h1 className="text-5xl font-extrabold text-white sm:text-[5rem]">
             <span className="text-[hsl(280,100%,70%)]">Voty</span>
           </h1>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-            {videoPair.data.first && (
-              <div className="animate-fade-in flex max-w-2xl flex-col items-center justify-between p-8 md:flex-row">
-                <VideoListing
-                  video={videoPair.data.first}
-                  vote={() => castVote(videoPair.data.first?.id ?? -1)}
-                  disabled={isLoading}
-                />
-                <VideoListing
-                  video={videoPair.data.second}
-                  vote={() => castVote(videoPair.data.second?.id ?? -1)}
-                  disabled={isLoading}
-                />
-              </div>
-            )}
-          </div>
+          {videoPair.data.first && (
+            <div className="animate-fade-in flex flex-col items-center justify-between p-8 md:flex-row">
+              <VideoListing
+                video={videoPair.data.first}
+                vote={() => castVote(videoPair.data.first?.id ?? -1)}
+                disabled={isLoading}
+              />
+              <VideoListing
+                video={videoPair.data.second}
+                vote={() => castVote(videoPair.data.second?.id ?? -1)}
+                disabled={isLoading}
+              />
+            </div>
+          )}
         </div>
       </main>
     </>
@@ -88,7 +90,7 @@ const VideoListing: React.FC<{
       }`}
       key={props.video?.id}
     >
-      <div>
+      <div className="min-w-xl min-h-xl min-w-l max-h-xl m-10 bg-slate-500">
         <ReactPlayer
           url={props.video?.url ?? ""}
           playing
@@ -106,7 +108,7 @@ const VideoListing: React.FC<{
         onClick={() => props.vote()}
         disabled={props.disabled}
       >
-        Vote!
+        <Image src="/logo.png" alt="vote" width={52} height={52} />
       </button>
     </div>
   );

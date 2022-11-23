@@ -19,12 +19,14 @@ export const votingRouter = router({
   castVote: publicProcedure
     .input(
       z.object({
+        userId: z.number(),
+        votingId: z.number(),
         votedFor: z.number(),
         votedAgainst: z.number(),
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const { votedFor, votedAgainst } = input;
+      const { votedFor, votedAgainst, votingId, userId } = input;
       const vote = await ctx.prisma.vote.create({
         data: {
           votedFor: {
@@ -35,6 +37,16 @@ export const votingRouter = router({
           votedAgainst: {
             connect: {
               id: votedAgainst,
+            },
+          },
+          Voting: {
+            connect: {
+              id: votingId,
+            },
+          },
+          User: {
+            connect: {
+              id: userId,
             },
           },
         },
