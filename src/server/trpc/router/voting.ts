@@ -3,19 +3,42 @@ import { z } from "zod";
 import { router, publicProcedure } from "../trpc";
 
 export const votingRouter = router({
-  getAllVideos: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.video.findMany();
-  }),
-  getVideoPair: publicProcedure.query(async ({ ctx }) => {
-    const [first, second] = getOptionsForVote();
-    const bothVideos = await ctx.prisma.video.findMany({
-      where: {
-        OR: [{ id: first }, { id: second }],
-      },
-    });
+  getAllVideos: publicProcedure
+    .input(
+      z.object({
+        votingId: z.number(),
+      })
+    )
+    .query(({ ctx, input }) => {
+      return ctx.prisma.video.findMany({
+        where: {
+          Voting: {
+            id: input.votingId,
+          },
+        },
+      });
+    }),
 
-    return { first: bothVideos[0], second: bothVideos[1] };
+  getAllVotings: publicProcedure.query(({ ctx }) => {
+    return ctx.prisma.voting.findMany();
   }),
+
+  getVideoPair: publicProcedure
+    .input(
+      z.object({
+        votingId: z.number(),
+      })
+    )
+    .query(async ({ ctx }) => {
+      const [first, second] = getOptionsForVote();
+      const bothVideos = await ctx.prisma.video.findMany({
+        where: {
+          OR: [{ id: first }, { id: second }],
+        },
+      });
+      return { first: bothVideos[0], second: bothVideos[1] };
+    }),
+
   castVote: publicProcedure
     .input(
       z.object({
