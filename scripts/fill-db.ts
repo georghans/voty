@@ -1,6 +1,21 @@
 import { prisma } from "../src/server/db/client";
 
-const fillVideoTable = async () => {
+const fillDB = async () => {
+  const user = await prisma.user.create({
+    data: {
+      id: 1,
+      name: "testuser",
+    },
+  });
+
+  const voting = await prisma.voting.create({
+    data: {
+      id: 1,
+      title: "goals",
+      userId: 1,
+    },
+  });
+
   const videos = [
     {
       title: "Cheng Goal 1",
@@ -36,11 +51,13 @@ const fillVideoTable = async () => {
     },
   ];
 
-  const creations = await Promise.all(
-    videos.map((video) => prisma.video.create({ data: video }))
+  const videoCreations = await Promise.all(
+    videos.map((video) =>
+      prisma.video.create({ data: { ...video, votingId: 1 } })
+    )
   );
 
-  console.log("Creations?", creations);
+  console.log("Creations?", user, voting, videoCreations);
 };
 
-fillVideoTable();
+fillDB();
