@@ -17,10 +17,12 @@
     "@trpc/next": "10.0.0-rc.4",
     "@trpc/react-query": "10.0.0-rc.4",
     "@trpc/server": "10.0.0-rc.4",
+    "clsx": "^1.2.1",
     "next": "13.0.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-player": "^2.10.0",
+    "seamless-scroll-polyfill": "^2.2.0",
     "superjson": "1.9.1",
     "zod": "^3.18.0"
   },
