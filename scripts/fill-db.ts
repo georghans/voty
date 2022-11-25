@@ -4,14 +4,16 @@ const fillDB = async () => {
   const user = await prisma.user.create({
     data: {
       id: 1,
-      name: "testuser",
+      name: "Max Mustermann",
     },
   });
 
   const voting = await prisma.voting.create({
     data: {
       id: 1,
-      title: "goals",
+      title: "TSV Fichte Hagen Goals",
+      description:
+        "A collection goals from TSV Fichte Hagen games. Vote for your favorite goal!",
       userId: 1,
     },
   });
@@ -57,7 +59,15 @@ const fillDB = async () => {
     )
   );
 
-  console.log("Creations?", user, voting, videoCreations);
+  console.log(
+    "Creations:\n",
+    "\nusers:\n",
+    user,
+    "\nvotings:\n",
+    voting,
+    "\nvideos:\n",
+    videoCreations
+  );
 };
 
 fillDB();

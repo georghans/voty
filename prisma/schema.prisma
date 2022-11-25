@@ -36,13 +36,14 @@ model Video {
 }
 
 model Voting {
-  id        Int      @id @default(autoincrement())
-  title     String   @unique
-  createdAt DateTime @default(now())
-  videos    Video[]
-  User      User     @relation(fields: [userId], references: [id])
-  userId    Int
-  Vote      Vote[]
+  id          Int      @id @default(autoincrement())
+  title       String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  videos      Video[]
+  User        User     @relation(fields: [userId], references: [id])
+  userId      Int
+  Vote        Vote[]
 }
 
 model User {
