@@ -39,6 +39,37 @@ export const votingRouter = router({
       return { first: bothVideos[0], second: bothVideos[1] };
     }),
 
+  getResults: publicProcedure
+    .input(
+      z.object({
+        votingId: z.number(),
+      })
+    )
+    .query(({ ctx, input }) => {
+      return ctx.prisma.video.findMany({
+        where: {
+          Voting: {
+            id: input.votingId,
+          },
+        },
+        orderBy: {
+          VoteFor: {
+            _count: "desc",
+          },
+        },
+        select: {
+          title: true,
+          url: true,
+          _count: {
+            select: {
+              VoteFor: true,
+              VoteAgainst: true,
+            },
+          },
+        },
+      });
+    }),
+
   castVote: publicProcedure
     .input(
       z.object({
