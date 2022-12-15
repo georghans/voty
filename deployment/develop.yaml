@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: voty
+  name: voty
+  namespace: memoresa
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: voty
+  template:
+    metadata:
+      labels:
+        app: voty
+    spec:
+      containers:
+        # https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+        - name: voty
+          image: bob.memoresa.de:5005/voty/voty:$DOCKER_IMAGE_TAG
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+      imagePullSecrets: # Private Registry Credentials provided as a cluster secret
+        - name: registry-credentials
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: voty
+  namespace: memoresa
+spec:
+  ports:
+    - port: 8080
+      targetPort: 3000
+      protocol: TCP
+  type: NodePort
+  selector:
+    app: voty

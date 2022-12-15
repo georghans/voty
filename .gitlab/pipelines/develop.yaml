@@ -1,0 +1,56 @@
+stages:
+  - docker
+  - deploy
+  - test
+
+# https://stackoverflow.com/a/70420880
+workflow:
+  rules:
+    - when: always
+
+## DOCKER ##
+docker-package:
+  stage: docker
+  image: docker:stable-dind
+  services:
+    - name: docker:stable-dind
+      alias: docker # https://gitlab.com/gitlab-org/gitlab-runner/-/issues/6295
+  needs:
+    - job: extract-ticket-number
+      pipeline: $PARENT_PIPELINE_ID
+      artifacts: true
+    - job: build-react
+      pipeline: $PARENT_PIPELINE_ID
+      artifacts: true
+  variables:
+    DOCKER_BUILDKIT: 1
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build --tag "${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA}" .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+
+deploy-dev:
+  stage: deploy
+  image:
+    name: bob.memoresa.de:5005/devops/k8s-cli # our own image with kubectl and java which is needed for our own ctl for ingress patching, ...
+    entrypoint: [""]
+  environment:
+    name: develop
+    url: https://voty.memoresa.dev
+    kubernetes:
+      namespace: memoresa
+  needs:
+    - job: docker-package
+      artifacts: false
+  variables:
+    # Use a fixed namespace for the stable branch
+    NAMESPACE_SLUG: memoresa
+  script:
+    - kubectl config get-contexts
+    # get kubeconfig for this context by agent
+    - kubectl config use-context voty/eks-clusters:memoresa-develop
+    # manage namespace
+    - kubectl create namespace $NAMESPACE_SLUG --dry-run=client -o yaml | kubectl apply -f -
+    - export DOCKER_IMAGE_TAG=$CI_COMMIT_SHORT_SHA
+    # apply the deployment
+    - cat ./deployment/develop.yaml | envsubst | kubectl apply -f -

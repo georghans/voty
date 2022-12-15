@@ -18,7 +18,9 @@ CREATE TABLE `Video` (
     `title` VARCHAR(191) NOT NULL,
     `url` VARCHAR(191) NOT NULL,
     `votingId` INTEGER NOT NULL,
+    `thumbnailB64` VARCHAR(191) NULL,
 
+    INDEX `Video_votingId_idx`(`votingId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

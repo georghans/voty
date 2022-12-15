@@ -1,3 +1,35 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  height: 100%;
+  width: 100%;
+  margin: 0px;
+  min-height: 100%;
+}
+
+body {
+  font-size: 16px;
+  font-weight: 400;
+  font-family: "Lato";
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+  min-height: 100%;
+  background-color: white;
+}
+
+/* React player aspect ratio */
+.player-wrapper {
+  position: relative;
+  padding-top: 56.25%; /* Player ratio: 100 / (1280 / 720) */
+}
+
+.react-player {
+  position: absolute;
+  top: 0;
+  left: 0;
+}

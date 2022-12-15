@@ -1,12 +1,17 @@
+import { AnimatePresence } from "framer-motion";
 import { type NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
+import { Spinner } from "../../../components/utils/Spinner";
+import { InvitedVotings } from "../../../components/votingsVariants/InvitedVotings";
 import { trpc } from "../../../utils/trpc";
 
-const Home: NextPage = () => {
-  const votings = trpc.voting.getAllVotings.useQuery();
-  const { userId } = useRouter().query;
+const SelectVoting: NextPage = () => {
+  const { userId, preselectedId } = useRouter().query;
+
+  const { data: votings, isInitialLoading: isLoadingMultipleVotings } =
+    trpc.voting.getAllVotings.useQuery();
+
   return (
     <>
       <Head>
@@ -14,30 +19,35 @@ const Home: NextPage = () => {
         <meta name="description" content="Video Voting Shootout POC App" />
         <link rel="icon" href="/logo.png" />
       </Head>
-      <main className="flex min-h-screen flex-col items-center justify-center ">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <div className="flex flex-col items-center justify-center gap-4">
-            <h3 className="text-2xl font-bold text-white">All open votings:</h3>
-          </div>
-          {votings.data?.map((voting) => (
-            <div
-              key={voting.id}
-              className="animate-fade-in flex flex-col items-center justify-between p-8 md:flex-row"
-            >
-              <div className="flex flex-col items-center justify-center gap-4">
-                <Link
-                  href={`/voting/${userId}/${voting.id}`}
-                  className="rounded border border-white bg-transparent py-2 px-4 font-semibold capitalize text-white hover:border-transparent hover:bg-white hover:text-black"
-                >
-                  {voting.title}
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-      </main>
+      {isLoadingMultipleVotings || !votings || votings.length === 0 ? (
+        <Spinner main />
+      ) : (
+        <main className="flex h-full flex-col items-center justify-center px-4">
+          <AnimatePresence
+            mode="wait"
+            initial={true}
+            onExitComplete={() => window.scrollTo(0, 0)}
+          >
+            <InvitedVotings
+              votings={votings}
+              votingId={parseInt(preselectedId as string)}
+              userId={userId as string}
+            />
+          </AnimatePresence>
+        </main>
+      )}
     </>
   );
 };
+SelectVoting.getInitialProps = async (ctx) => {
+  // get the query parameter from the context object
+  const { query } = ctx;
 
-export default Home;
+  // set the query parameter on the router object
+  // so that it is available on the first render
+  ctx.query = query;
+
+  // return an empty object
+  return {};
+};
+export default SelectVoting;

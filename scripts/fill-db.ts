@@ -1,4 +1,5 @@
 import { prisma } from "../src/server/db/client";
+import { getThumbnails } from "../src/utils/getThumbnails";
 
 const fillDB = async () => {
   const user = await prisma.user.create({
@@ -54,18 +55,24 @@ const fillDB = async () => {
   ];
 
   const videoCreations = await Promise.all(
-    videos.map((video) =>
-      prisma.video.create({ data: { ...video, votingId: 1 } })
+    videos.map(async (video) =>
+      prisma.video.create({
+        data: {
+          ...video,
+          votingId: 1,
+          thumbnailB64: (await getThumbnails(video.url)) as string,
+        },
+      })
     )
   );
 
   console.log(
     "Creations:\n",
-    "\nusers:\n",
+    "users:\n",
     user,
-    "\nvotings:\n",
+    "votings:\n",
     voting,
-    "\nvideos:\n",
+    "videos:\n",
     videoCreations
   );
 };
